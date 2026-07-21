@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CoverArt from '../../components/CoverArt.astro';
 import { getCollection } from 'astro:content';
+import { url } from '../../lib/url.js';
 
 export async function getStaticPaths() {
   const contributors = await getCollection('contributors');
@@ -60,7 +61,7 @@ const theirAdvice = advice.filter((a) => a.data.columnist.id === byline);
         <h2>Essays</h2>
         <div class="card-grid">
           {theirEssays.map((e) => (
-            <a class="card has-art" href={`/essays/${e.id}/`}>
+            <a class="card has-art" href={url(`/essays/${e.id}/`)}>
               <CoverArt seed={e.id} />
               <div class="card-copy">
                 <h3>{e.data.title}</h3>
@@ -78,7 +79,7 @@ const theirAdvice = advice.filter((a) => a.data.columnist.id === byline);
         <h2>Interviews conducted</h2>
         <div class="card-grid">
           {theirInterviews.map((i) => (
-            <a class="card has-art" href={`/interviews/${i.id}/`}>
+            <a class="card has-art" href={url(`/interviews/${i.id}/`)}>
               <CoverArt seed={i.id} />
               <div class="card-copy">
                 <h3>{i.data.subjectName}</h3>
@@ -96,7 +97,7 @@ const theirAdvice = advice.filter((a) => a.data.columnist.id === byline);
         <h2>Book reviews</h2>
         <div class="card-grid">
           {theirReviews.map((r) => (
-            <a class="card has-art" href={`/reviews/#${r.id}`}>
+            <a class="card has-art" href={url(`/reviews/#${r.id}`)}>
               <CoverArt seed={r.id} aspect="3 / 4" />
               <div class="card-copy">
                 <h3>{r.data.bookTitle}</h3>
@@ -114,7 +115,7 @@ const theirAdvice = advice.filter((a) => a.data.columnist.id === byline);
         <h2>Advice column</h2>
         <div class="card-grid">
           {theirAdvice.map((a) => (
-            <a class="card" href={`/advice/#${a.id}`}>
+            <a class="card" href={url(`/advice/#${a.id}`)}>
               <p>{a.data.question}</p>
             </a>
           ))}

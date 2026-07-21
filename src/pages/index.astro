@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Badge from '../components/Badge.astro';
 import CoverArt from '../components/CoverArt.astro';
 import { getCollection, getEntries } from 'astro:content';
+import { url } from '../lib/url.js';
 
 const [essays, interviews, reviews, advice, issues] = await Promise.all([
   getCollection('essays'),
@@ -98,7 +99,7 @@ const surveySpan = remainder === 0 ? 6 : 6 - remainder;
             </p>
           )}
           <h2>
-            <a href={`/essays/${feature.id}/`} style="color: inherit;">
+            <a href={url(`/essays/${feature.id}/`)} style="color: inherit;">
               {feature.data.title}
             </a>
           </h2>
@@ -108,7 +109,7 @@ const surveySpan = remainder === 0 ? 6 : 6 - remainder;
             {feature.data.publishDate.toDateString()}
           </p>
         </div>
-        <a href={`/essays/${feature.id}/`} class="feature-art">
+        <a href={url(`/essays/${feature.id}/`)} class="feature-art">
           <CoverArt seed={feature.id} aspect="4 / 3" />
         </a>
       </section>
@@ -122,7 +123,7 @@ const surveySpan = remainder === 0 ? 6 : 6 - remainder;
         rest.map((item, i) => (
           <a
             class={`card has-art mosaic-span-${spanPattern[i % spanPattern.length]}`}
-            href={item.href}
+            href={url(item.href)}
           >
             <CoverArt seed={item.id} />
             <div class="card-copy">
@@ -133,7 +134,7 @@ const surveySpan = remainder === 0 ? 6 : 6 - remainder;
           </a>
         ))
       }
-      <a href="/survey/" class={`card promo-card mosaic-span-${surveySpan}`}>
+      <a href={url('/survey/')} class={`card promo-card mosaic-span-${surveySpan}`}>
         <p class="kicker">We're Data People</p>
         <h3>Take the Survey</h3>
         <p class="dek" style="margin: 0;">

@@ -1,5 +1,6 @@
 ---
 import Badge from './Badge.astro';
+import { url } from '../lib/url.js';
 
 const links = [
   { href: '/issues/', label: 'Issues' },
@@ -16,7 +17,7 @@ const links = [
 
 <header class="site-header" id="site-header">
   <div class="wrap header-inner">
-    <a href="/" class="brand">
+    <a href={url('/')} class="brand">
       <Badge size={40} />
       <span class="brand-text">
         <span class="brand-name">Data Behind the Scenes</span>
@@ -41,7 +42,7 @@ const links = [
         {
           links.map((link) => (
             <li>
-              <a href={link.href}>{link.label}</a>
+              <a href={url(link.href)}>{link.label}</a>
             </li>
           ))
         }

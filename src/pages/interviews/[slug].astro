@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CoverArt from '../../components/CoverArt.astro';
 import { getCollection, getEntry, render } from 'astro:content';
+import { url } from '../../lib/url.js';
 
 export async function getStaticPaths() {
   const interviews = await getCollection('interviews');
@@ -23,14 +24,14 @@ const issue = await getEntry(interview.data.issue);
   </div>
 
   <p class="kicker">
-    {issue && <a href={`/issues/${issue.id}/`}>Issue {issue.data.number} · {issue.data.theme}</a>}
+    {issue && <a href={url(`/issues/${issue.id}/`)}>Issue {issue.data.number} · {issue.data.theme}</a>}
     {' · '}
     {interview.data.format}
   </p>
   <h1>{interview.data.subjectName}</h1>
   <p class="meta">
     Interviewed by{' '}
-    {interviewer && <a href={`/contributors/${interviewer.id}/`}>{interviewer.data.name}</a>}
+    {interviewer && <a href={url(`/contributors/${interviewer.id}/`)}>{interviewer.data.name}</a>}
   </p>
 
   {

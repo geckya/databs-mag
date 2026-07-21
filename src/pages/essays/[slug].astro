@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CoverArt from '../../components/CoverArt.astro';
 import { getCollection, getEntry, getEntries, render } from 'astro:content';
+import { url } from '../../lib/url.js';
 
 export async function getStaticPaths() {
   const essays = await getCollection('essays');
@@ -25,7 +26,7 @@ const issue = await getEntry(essay.data.issue);
   {
     issue && (
       <p class="kicker">
-        <a href={`/issues/${issue.id}/`}>
+        <a href={url(`/issues/${issue.id}/`)}>
           Issue {issue.data.number} · {issue.data.theme}
         </a>
       </p>
@@ -62,7 +63,7 @@ const issue = await getEntry(essay.data.issue);
     <div class="card-grid">
       {
         authors.map((author) => (
-          <a class="card has-art" href={`/contributors/${author.id}/`}>
+          <a class="card has-art" href={url(`/contributors/${author.id}/`)}>
             <CoverArt seed={author.id} aspect="1 / 1" />
             <div class="card-copy">
               <h3>{author.data.name}</h3>

@@ -1,34 +1,7 @@
-@font-face {
-  font-family: 'Fraunces';
-  src: url('/fonts/fraunces-latin-600-normal.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Instrument Serif';
-  src: url('/fonts/InstrumentSerif-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('/fonts/IBMPlexMono-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'IBM Plex Mono';
-  src: url('/fonts/IBMPlexMono-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* @font-face declarations live in Base.astro, not here — their src URLs need
+   to be prefixed with the site's base path at build time (see src/lib/url.js
+   for why), and CSS custom properties don't work inside @font-face in any
+   browser, so they can't be templated from this plain .css file. */
 
 :root {
   /* palette pulled from databsconf.com */

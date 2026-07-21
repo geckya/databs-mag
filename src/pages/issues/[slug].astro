@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CoverArt from '../../components/CoverArt.astro';
 import { getCollection, render } from 'astro:content';
+import { url } from '../../lib/url.js';
 
 export async function getStaticPaths() {
   const issues = await getCollection('issues');
@@ -46,7 +47,7 @@ const advice = allAdvice.filter((a) => a.data.issue?.id === issue.id);
         <h2>Essays in this issue</h2>
         <div class="card-grid">
           {essays.map((essay) => (
-            <a class="card has-art" href={`/essays/${essay.id}/`}>
+            <a class="card has-art" href={url(`/essays/${essay.id}/`)}>
               <CoverArt seed={essay.id} />
               <div class="card-copy">
                 <h3>{essay.data.title}</h3>
@@ -65,7 +66,7 @@ const advice = allAdvice.filter((a) => a.data.issue?.id === issue.id);
         <h2>Interviews in this issue</h2>
         <div class="card-grid">
           {interviews.map((interview) => (
-            <a class="card has-art" href={`/interviews/${interview.id}/`}>
+            <a class="card has-art" href={url(`/interviews/${interview.id}/`)}>
               <CoverArt seed={interview.id} />
               <div class="card-copy">
                 <h3>{interview.data.subjectName}</h3>
@@ -84,7 +85,7 @@ const advice = allAdvice.filter((a) => a.data.issue?.id === issue.id);
         <h2>Book reviews in this issue</h2>
         <div class="card-grid">
           {reviews.map((review) => (
-            <a class="card has-art" href={`/reviews/#${review.id}`}>
+            <a class="card has-art" href={url(`/reviews/#${review.id}`)}>
               <CoverArt seed={review.id} aspect="3 / 4" />
               <div class="card-copy">
                 <h3>{review.data.bookTitle}</h3>
@@ -103,7 +104,7 @@ const advice = allAdvice.filter((a) => a.data.issue?.id === issue.id);
         <h2>Advice column in this issue</h2>
         <div class="card-grid">
           {advice.map((entry) => (
-            <a class="card" href={`/advice/#${entry.id}`}>
+            <a class="card" href={url(`/advice/#${entry.id}`)}>
               <p>{entry.data.question}</p>
             </a>
           ))}

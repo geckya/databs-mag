@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CoverArt from '../../components/CoverArt.astro';
 import { getCollection } from 'astro:content';
+import { url } from '../../lib/url.js';
 
 const contributors = (await getCollection('contributors')).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
@@ -15,7 +16,7 @@ const contributors = (await getCollection('contributors')).sort((a, b) =>
   <div class="card-grid">
     {
       contributors.map((c) => (
-        <a class="card has-art" href={`/contributors/${c.id}/`}>
+        <a class="card has-art" href={url(`/contributors/${c.id}/`)}>
           <CoverArt seed={c.id} aspect="1 / 1" />
           <div class="card-copy">
             <p class="kicker">{c.data.role}</p>
