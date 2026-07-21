@@ -1,9 +1,9 @@
 name: Build and check
 
+# PR-only: pushes to main are already built and deployed by deploy.yml, so
+# running the same build again here would just be a redundant second job.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build
