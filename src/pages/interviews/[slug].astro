@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const interviews = await getCollection('interviews');
+  return interviews.map((interview) => ({
+    params: { slug: interview.id },
+    props: { interview },
+  }));
+}
+
+const { interview } = Astro.props;
+const { Content } = await render(interview);
+const interviewer = await getEntry(interview.data.interviewer);
+const issue = await getEntry(interview.data.issue);
+---
+
+<Base title={interview.data.subjectName}>
+  <div class="banner">
+    <CoverArt seed={interview.id} aspect="21 / 9" />
+  </div>
+
+  <p class="kicker">
+    {issue && <a href={`/issues/${issue.id}/`}>Issue {issue.data.number} · {issue.data.theme}</a>}
+    {' · '}
+    {interview.data.format}
+  </p>
+  <h1>{interview.data.subjectName}</h1>
+  <p class="meta">
+    Interviewed by{' '}
+    {interviewer && <a href={`/contributors/${interviewer.id}/`}>{interviewer.data.name}</a>}
+  </p>
+
+  {
+    interview.data.format !== 'print' && interview.data.mediaUrl && (
+      <p class="meta">
+        <a href={interview.data.mediaUrl}>▶ Watch/listen ({interview.data.format})</a>
+      </p>
+    )
+  }
+
+  <div class="prose section">
+    <Content />
+  </div>
+</Base>
+
+<style>
+  .banner {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    margin: 1.5rem 0 2rem;
+  }
+</style>

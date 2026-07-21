@@ -1,0 +1,85 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection, getEntry, getEntries, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const essays = await getCollection('essays');
+  return essays.map((essay) => ({
+    params: { slug: essay.id },
+    props: { essay },
+  }));
+}
+
+const { essay } = Astro.props;
+const { Content } = await render(essay);
+const authors = await getEntries(essay.data.authors);
+const issue = await getEntry(essay.data.issue);
+---
+
+<Base title={essay.data.title} description={essay.data.dek}>
+  <div class="banner">
+    <CoverArt seed={essay.id} aspect="21 / 9" />
+  </div>
+
+  {
+    issue && (
+      <p class="kicker">
+        <a href={`/issues/${issue.id}/`}>
+          Issue {issue.data.number} · {issue.data.theme}
+        </a>
+      </p>
+    )
+  }
+  <h1>{essay.data.title}</h1>
+  {essay.data.dek && <p class="dek-serif">{essay.data.dek}</p>}
+
+  <p class="meta" style="margin-top: 1rem;">
+    By{' '}
+    {authors
+      .map((a) => a.data.name)
+      .join(', ')}
+    {' · '}
+    {essay.data.publishDate.toDateString()}
+  </p>
+
+  {
+    essay.data.tags.length > 0 && (
+      <ul class="tag-list">
+        {essay.data.tags.map((tag) => (
+          <li class="tag">{tag}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="prose section">
+    <Content />
+  </div>
+
+  <section class="section">
+    <h2>About the {authors.length > 1 ? 'authors' : 'author'}</h2>
+    <div class="card-grid">
+      {
+        authors.map((author) => (
+          <a class="card has-art" href={`/contributors/${author.id}/`}>
+            <CoverArt seed={author.id} aspect="1 / 1" />
+            <div class="card-copy">
+              <h3>{author.data.name}</h3>
+              <p class="dek">{author.data.bio}</p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .banner {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    margin: 1.5rem 0 2rem;
+  }
+</style>

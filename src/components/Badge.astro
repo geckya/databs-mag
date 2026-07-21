@@ -1,0 +1,25 @@
+---
+// Real badge mark, supplied by the team. Same brand as the conference (databsconf.com) —
+// this magazine lives at databehindthescenes.com, so reusing the mark as-is is intentional,
+// not a placeholder. Swap the file in /public/branding/ if a magazine-specific variant of
+// the ring text ever gets designed.
+interface Props {
+  size?: number;
+}
+const { size = 64 } = Astro.props;
+---
+
+<img
+  src="/branding/data-bs-badge.png"
+  width={size}
+  height={size}
+  alt="Data Behind the Scenes badge"
+  class="badge"
+/>
+
+<style>
+  .badge {
+    display: block;
+    object-fit: contain;
+  }
+</style>

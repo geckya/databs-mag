@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+
+const reviews = (await getCollection('book-reviews')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+
+const withReviewers = await Promise.all(
+  reviews.map(async (review) => ({
+    review,
+    reviewer: await getEntry(review.data.reviewer),
+    rendered: await render(review),
+  }))
+);
+---
+
+<Base title="Book Reviews" description="Book reviews and reading lists from the team.">
+  <h1>Book Reviews & Reading Lists</h1>
+  <p class="dek">What we've been reading, and what we thought.</p>
+
+  {
+    withReviewers.map(({ review, reviewer, rendered }) => (
+      <article class="section review-row" id={review.id}>
+        <div class="review-cover">
+          <CoverArt seed={review.id} aspect="3 / 4" />
+        </div>
+        <div>
+          <h2>
+            {review.data.bookTitle}
+            {review.data.rating && <span class="meta"> · {review.data.rating}/5</span>}
+          </h2>
+          <p class="meta">{review.data.bookAuthor}</p>
+          <div class="prose">
+            <rendered.Content />
+          </div>
+          <p class="meta">
+            Reviewed by{' '}
+            {reviewer && <a href={`/contributors/${reviewer.id}/`}>{reviewer.data.name}</a>}
+          </p>
+        </div>
+      </article>
+    ))
+  }
+</Base>
+
+<style>
+  .review-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .review-cover {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 600px) {
+    .review-row {
+      grid-template-columns: 90px 1fr;
+    }
+  }
+</style>

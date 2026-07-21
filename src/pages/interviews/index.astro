@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection } from 'astro:content';
+
+const interviews = (await getCollection('interviews')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+
+<Base title="Interviews" description="Print, audio, and video interviews.">
+  <h1>Interviews</h1>
+  <p class="dek">Print, audio, and video conversations with people doing the work.</p>
+
+  <div class="card-grid">
+    {
+      interviews.map((interview) => (
+        <a class="card has-art" href={`/interviews/${interview.id}/`}>
+          <CoverArt seed={interview.id} />
+          <div class="card-copy">
+            <p class="kicker">{interview.data.format}</p>
+            <h3>{interview.data.subjectName}</h3>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Base>

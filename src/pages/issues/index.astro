@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection } from 'astro:content';
+
+const issues = (await getCollection('issues')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+---
+
+<Base title="Issues" description="Every issue of Data Behind the Scenes, the magazine.">
+  <h1>Issues</h1>
+  <p class="dek">Themed collections, released quarterly.</p>
+
+  <div class="card-grid">
+    {
+      issues.map((issue) => (
+        <a class="card has-art" href={`/issues/${issue.id}/`}>
+          <CoverArt seed={issue.id} aspect="16 / 9" />
+          <div class="card-copy">
+            <p class="kicker">
+              Issue {issue.data.number} · {issue.data.season} {issue.data.year} ·{' '}
+              {issue.data.status}
+            </p>
+            <h3>{issue.data.theme}</h3>
+            <p class="dek">{issue.data.dek}</p>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Base>

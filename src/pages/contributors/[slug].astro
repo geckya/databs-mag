@@ -1,0 +1,147 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const contributors = await getCollection('contributors');
+  return contributors.map((contributor) => ({
+    params: { slug: contributor.id },
+    props: { contributor },
+  }));
+}
+
+const { contributor } = Astro.props;
+
+// Auto-aggregate everything this contributor is referenced on —
+// this is the payoff of modeling contributors as their own collection
+// with essays/interviews/reviews/advice pointing back at them.
+const [essays, interviews, reviews, advice] = await Promise.all([
+  getCollection('essays'),
+  getCollection('interviews'),
+  getCollection('book-reviews'),
+  getCollection('advice-column'),
+]);
+
+const byline = contributor.id;
+const theirEssays = essays.filter((e) => e.data.authors.some((a) => a.id === byline));
+const theirInterviews = interviews.filter((i) => i.data.interviewer.id === byline);
+const theirReviews = reviews.filter((r) => r.data.reviewer.id === byline);
+const theirAdvice = advice.filter((a) => a.data.columnist.id === byline);
+---
+
+<Base title={contributor.data.name} description={contributor.data.bio}>
+  <div class="profile-head">
+    <div class="profile-art">
+      <CoverArt seed={contributor.id} aspect="1 / 1" />
+    </div>
+    <div>
+      <p class="kicker">{contributor.data.role}</p>
+      <h1>{contributor.data.name}</h1>
+      <p class="dek">{contributor.data.bio}</p>
+
+      {
+        contributor.data.links && (
+          <ul class="tag-list">
+            {Object.entries(contributor.data.links).map(([label, href]) => (
+              <li class="tag">
+                <a href={href as string}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    theirEssays.length > 0 && (
+      <section class="section">
+        <h2>Essays</h2>
+        <div class="card-grid">
+          {theirEssays.map((e) => (
+            <a class="card has-art" href={`/essays/${e.id}/`}>
+              <CoverArt seed={e.id} />
+              <div class="card-copy">
+                <h3>{e.data.title}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    theirInterviews.length > 0 && (
+      <section class="section">
+        <h2>Interviews conducted</h2>
+        <div class="card-grid">
+          {theirInterviews.map((i) => (
+            <a class="card has-art" href={`/interviews/${i.id}/`}>
+              <CoverArt seed={i.id} />
+              <div class="card-copy">
+                <h3>{i.data.subjectName}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    theirReviews.length > 0 && (
+      <section class="section">
+        <h2>Book reviews</h2>
+        <div class="card-grid">
+          {theirReviews.map((r) => (
+            <a class="card has-art" href={`/reviews/#${r.id}`}>
+              <CoverArt seed={r.id} aspect="3 / 4" />
+              <div class="card-copy">
+                <h3>{r.data.bookTitle}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    theirAdvice.length > 0 && (
+      <section class="section">
+        <h2>Advice column</h2>
+        <div class="card-grid">
+          {theirAdvice.map((a) => (
+            <a class="card" href={`/advice/#${a.id}`}>
+              <p>{a.data.question}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .profile-head {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 1.75rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+
+  .profile-art {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 600px) {
+    .profile-head {
+      grid-template-columns: 90px 1fr;
+    }
+  }
+</style>

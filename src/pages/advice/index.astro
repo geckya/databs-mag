@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+
+const entries = (await getCollection('advice-column')).sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+);
+
+const withAuthors = await Promise.all(
+  entries.map(async (entry) => ({
+    entry,
+    columnist: await getEntry(entry.data.columnist),
+    rendered: await render(entry),
+  }))
+);
+---
+
+<Base title="Advice Column" description="Data-adjacent advice, answered.">
+  <h1>Advice Column</h1>
+  <p class="dek">Questions from readers, answered by the team.</p>
+
+  {
+    withAuthors.map(({ entry, columnist, rendered }) => (
+      <article class="section" id={entry.id}>
+        <h2>{entry.data.question}</h2>
+        <div class="prose">
+          <rendered.Content />
+        </div>
+        <p class="meta">
+          — {columnist?.data.name} · {entry.data.publishDate.toDateString()}
+        </p>
+      </article>
+    ))
+  }
+</Base>

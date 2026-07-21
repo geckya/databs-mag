@@ -1,0 +1,339 @@
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/InstrumentSerif-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBMPlexMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* palette pulled from databsconf.com */
+  --color-ink: #1a2238;       /* headlines, body text */
+  --color-muted: #5c6b7a;     /* deks, subheads, captions */
+  --color-accent: #22594a;    /* links, icons, CTAs, badge stamp */
+  --color-accent-soft: #e7efec;
+  --color-accent-bright: #3f9c82;
+  --color-bg: #ffffff;
+  --color-bg-warm: #faf8f4;
+  --color-border: #e3e6ea;
+
+  /* big, warm editorial serif for headlines — the "digital pub" register */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  /* italic serif for pull quotes / deks that want a literary flourish */
+  --font-serif-italic: 'Instrument Serif', Georgia, serif;
+  /* clean sans for body copy and UI chrome */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  /* mono for metadata/bylines/tags — the "data" half of the identity */
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --measure: 68ch;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  font-size: 1.0625rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+
+h1 {
+  font-size: clamp(2.75rem, 6vw, 5rem);
+}
+
+h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.dek {
+  color: var(--color-muted);
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.dek-serif {
+  font-family: var(--font-serif-italic);
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--color-ink);
+  line-height: 1.4;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose :is(h2, h3) {
+  margin-top: 1.6em;
+}
+
+.prose blockquote {
+  margin: 1.75em 0;
+  padding-left: 1.25em;
+  border-left: 3px solid var(--color-accent);
+  font-family: var(--font-serif-italic);
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  list-style: none;
+}
+
+.tag {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: block;
+  background: var(--color-bg);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* variant for cards that lead with CoverArt — art runs edge-to-edge, copy gets
+   its own padded wrapper (`.card-copy`) instead of the card's default padding */
+.card.has-art {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card-copy {
+  padding: 1.25rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+
+/* asymmetric editorial mosaic — used on the homepage feed instead of a uniform grid */
+.mosaic {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.mosaic-span-4 {
+  grid-column: span 4;
+}
+
+.mosaic-span-3 {
+  grid-column: span 3;
+}
+
+.mosaic-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 860px) {
+  .mosaic {
+    grid-template-columns: 1fr;
+  }
+  .mosaic-span-4,
+  .mosaic-span-3,
+  .mosaic-span-2 {
+    grid-column: span 1;
+  }
+}
+
+.meta {
+  font-family: var(--font-mono);
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+}
+
+.section {
+  padding: 3rem 0;
+}
+
+.section + .section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* homepage lead/featured story treatment */
+.feature {
+  padding: 3rem 0 3.5rem;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+}
+
+.feature .feature-art {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.feature h1,
+.feature h2 {
+  margin-bottom: 0.3em;
+}
+
+@media (max-width: 860px) {
+  .feature {
+    grid-template-columns: 1fr;
+  }
+  .feature .feature-art {
+    order: -1;
+  }
+}
+
+.hero {
+  padding: 4rem 0 2rem;
+}
+
+/* full-height homepage masthead — sits above the (sticky) nav in the DOM, so on
+   load only this is visible; scrolling past it reveals the nav, which then
+   sticks to the top instead of repeating the same brand block twice */
+.masthead {
+  min-height: 54vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  padding: 3rem 1.5rem;
+}
+
+.masthead-inner {
+  max-width: 620px;
+}
+
+.masthead .dek {
+  margin: 0 auto;
+}
+
+/* survey promo tile — fills whatever's left in the mosaic's last row instead
+   of leaving empty columns, and reads as a promo rather than an article */
+.promo-card {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.promo-card .kicker,
+.promo-card h3 {
+  color: #fff;
+}
+
+.promo-card .dek {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+}
+
+.promo-card:hover {
+  border-color: var(--color-accent-bright);
+  text-decoration: none;
+}
+

@@ -1,0 +1,146 @@
+---
+import Base from '../layouts/Base.astro';
+import Badge from '../components/Badge.astro';
+import CoverArt from '../components/CoverArt.astro';
+import { getCollection, getEntries } from 'astro:content';
+
+const [essays, interviews, reviews, advice, issues] = await Promise.all([
+  getCollection('essays'),
+  getCollection('interviews'),
+  getCollection('book-reviews'),
+  getCollection('advice-column'),
+  getCollection('issues'),
+]);
+
+const publishedEssays = essays
+  .filter((e) => e.data.status === 'published')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const feature = publishedEssays[0];
+const featureAuthors = feature ? await getEntries(feature.data.authors) : [];
+
+const latestIssue = issues
+  .filter((i) => i.data.status === 'published')
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())[0];
+
+// Everything else, mixed across formats, newest first — this is the "rest of the
+// homepage feed" below the lead story.
+const rest = [
+  ...publishedEssays.slice(1).map((e) => ({
+    kind: 'Essay',
+    id: e.id,
+    title: e.data.title,
+    dek: e.data.dek,
+    href: `/essays/${e.id}/`,
+    date: e.data.publishDate,
+  })),
+  ...interviews
+    .filter((i) => i.data.status === 'published')
+    .map((i) => ({
+      kind: `Interview · ${i.data.format}`,
+      id: i.id,
+      title: i.data.subjectName,
+      dek: undefined,
+      href: `/interviews/${i.id}/`,
+      date: i.data.publishDate,
+    })),
+  ...reviews.map((r) => ({
+    kind: 'Book Review',
+    id: r.id,
+    title: r.data.bookTitle,
+    dek: r.data.bookAuthor,
+    href: `/reviews/#${r.id}`,
+    date: r.data.publishDate,
+  })),
+  ...advice.map((a) => ({
+    kind: 'Advice Column',
+    id: a.id,
+    title: a.data.question,
+    dek: undefined,
+    href: `/advice/#${a.id}`,
+    date: a.data.publishDate,
+  })),
+]
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 8);
+
+// A repeating span pattern so the feed reads as art-directed rather than a
+// uniform grid — every third item runs wide, the rest sit two-up.
+const spanPattern = [4, 2, 3, 3, 2, 4];
+
+// Fill whatever's left in the mosaic's last row with the survey promo instead
+// of leaving empty columns — a full row (6) if the last row happened to land
+// exactly even, otherwise just the remainder.
+const usedCols = rest.reduce((sum, _item, i) => sum + spanPattern[i % spanPattern.length], 0);
+const remainder = usedCols % 6;
+const surveySpan = remainder === 0 ? 6 : 6 - remainder;
+---
+
+<Base title="Home" description="A quarterly magazine about the messy, honest work of data.">
+  <Fragment slot="masthead">
+    <div class="masthead">
+      <div class="masthead-inner">
+        <Badge size={96} />
+        <p class="kicker" style="margin-top: 1.5rem;">The Magazine</p>
+        <h1>Data Behind the Scenes</h1>
+        <p class="dek">Essays, interviews, and advice on the messy, honest work of data.</p>
+      </div>
+    </div>
+  </Fragment>
+
+  {
+    feature && (
+      <section class="feature">
+        <div>
+          {latestIssue && (
+            <p class="kicker">
+              Issue {latestIssue.data.number} · {latestIssue.data.theme}
+            </p>
+          )}
+          <h2>
+            <a href={`/essays/${feature.id}/`} style="color: inherit;">
+              {feature.data.title}
+            </a>
+          </h2>
+          {feature.data.dek && <p class="dek-serif">{feature.data.dek}</p>}
+          <p class="meta" style="margin-top: 1rem;">
+            {featureAuthors.map((a) => a.data.name).join(', ')} ·{' '}
+            {feature.data.publishDate.toDateString()}
+          </p>
+        </div>
+        <a href={`/essays/${feature.id}/`} class="feature-art">
+          <CoverArt seed={feature.id} aspect="4 / 3" />
+        </a>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <h2>From the magazine</h2>
+    <div class="mosaic">
+      {
+        rest.map((item, i) => (
+          <a
+            class={`card has-art mosaic-span-${spanPattern[i % spanPattern.length]}`}
+            href={item.href}
+          >
+            <CoverArt seed={item.id} />
+            <div class="card-copy">
+              <p class="kicker">{item.kind}</p>
+              <h3>{item.title}</h3>
+              {item.dek && <p class="meta">{item.dek}</p>}
+            </div>
+          </a>
+        ))
+      }
+      <a href="/survey/" class={`card promo-card mosaic-span-${surveySpan}`}>
+        <p class="kicker">We're Data People</p>
+        <h3>Take the Survey</h3>
+        <p class="dek" style="margin: 0;">
+          Help us understand who's actually doing this work — results become their own
+          data story in a future issue.
+        </p>
+      </a>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,123 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const issues = await getCollection('issues');
+  return issues.map((issue) => ({
+    params: { slug: issue.id },
+    props: { issue },
+  }));
+}
+
+const { issue } = Astro.props;
+const { Content } = await render(issue);
+
+const allEssays = await getCollection('essays');
+const allInterviews = await getCollection('interviews');
+const allReviews = await getCollection('book-reviews');
+const allAdvice = await getCollection('advice-column');
+
+const essays = allEssays.filter((e) => e.data.issue.id === issue.id);
+const interviews = allInterviews.filter((i) => i.data.issue.id === issue.id);
+const reviews = allReviews.filter((r) => r.data.issue?.id === issue.id);
+const advice = allAdvice.filter((a) => a.data.issue?.id === issue.id);
+---
+
+<Base title={issue.data.theme} description={issue.data.dek}>
+  <div class="banner">
+    <CoverArt seed={issue.id} aspect="21 / 9" />
+  </div>
+
+  <p class="kicker">
+    Issue {issue.data.number} · {issue.data.season} {issue.data.year} · {issue.data.status}
+  </p>
+  <h1>{issue.data.theme}</h1>
+  <p class="dek-serif">{issue.data.dek}</p>
+
+  <div class="prose">
+    <Content />
+  </div>
+
+  {
+    essays.length > 0 && (
+      <section class="section">
+        <h2>Essays in this issue</h2>
+        <div class="card-grid">
+          {essays.map((essay) => (
+            <a class="card has-art" href={`/essays/${essay.id}/`}>
+              <CoverArt seed={essay.id} />
+              <div class="card-copy">
+                <h3>{essay.data.title}</h3>
+                {essay.data.dek && <p class="dek">{essay.data.dek}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    interviews.length > 0 && (
+      <section class="section">
+        <h2>Interviews in this issue</h2>
+        <div class="card-grid">
+          {interviews.map((interview) => (
+            <a class="card has-art" href={`/interviews/${interview.id}/`}>
+              <CoverArt seed={interview.id} />
+              <div class="card-copy">
+                <h3>{interview.data.subjectName}</h3>
+                <p class="meta">{interview.data.format}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    reviews.length > 0 && (
+      <section class="section">
+        <h2>Book reviews in this issue</h2>
+        <div class="card-grid">
+          {reviews.map((review) => (
+            <a class="card has-art" href={`/reviews/#${review.id}`}>
+              <CoverArt seed={review.id} aspect="3 / 4" />
+              <div class="card-copy">
+                <h3>{review.data.bookTitle}</h3>
+                <p class="meta">{review.data.bookAuthor}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    advice.length > 0 && (
+      <section class="section">
+        <h2>Advice column in this issue</h2>
+        <div class="card-grid">
+          {advice.map((entry) => (
+            <a class="card" href={`/advice/#${entry.id}`}>
+              <p>{entry.data.question}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .banner {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    margin: 1.5rem 0 2rem;
+  }
+</style>

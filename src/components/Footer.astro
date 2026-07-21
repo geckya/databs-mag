@@ -1,0 +1,73 @@
+---
+const year = new Date().getFullYear();
+
+const socials = [
+  { href: 'https://databsconf.com/', label: 'Conference site' },
+  { href: 'https://bit.ly/databs-chat', label: 'Discord' },
+  // Reusing the conference's Bluesky for now — worth spinning up a magazine-specific
+  // account later if the two start wanting distinct voices/posting cadences.
+  { href: 'https://bsky.app/profile/databsconf.com', label: 'Bluesky' },
+  { href: 'https://www.youtube.com/@DataBehindTheScenes', label: 'YouTube' },
+];
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <p class="meta">
+        Data Behind the Scenes — the magazine.
+        <br />
+        From the folks who brought you <a href="https://databsconf.com/">databsconf.com</a>.
+      </p>
+      <p class="meta copyright">&copy; {year} Data Behind the Scenes. All rights reserved.</p>
+    </div>
+    <ul class="footer-links">
+      {
+        socials.map((s) => (
+          <li>
+            <a href={s.href}>{s.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: 2rem 0;
+    margin-top: 3rem;
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  .copyright {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  /* On narrow screens, stack with the links on top and the brand/copyright
+     block on the bottom — reads better than the links trailing off below a
+     wall of text. */
+  @media (max-width: 700px) {
+    .footer-inner {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import { getCollection } from 'astro:content';
+
+const contributors = (await getCollection('contributors')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name)
+);
+---
+
+<Base title="Contributors" description="Writers, editors, and interviewers behind the magazine.">
+  <h1>Contributors</h1>
+  <p class="dek">Short bios, and links to everything each person has contributed.</p>
+
+  <div class="card-grid">
+    {
+      contributors.map((c) => (
+        <a class="card has-art" href={`/contributors/${c.id}/`}>
+          <CoverArt seed={c.id} aspect="1 / 1" />
+          <div class="card-copy">
+            <p class="kicker">{c.data.role}</p>
+            <h3>{c.data.name}</h3>
+            <p class="dek">{c.data.bio}</p>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Base>
